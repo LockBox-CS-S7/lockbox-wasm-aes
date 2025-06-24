@@ -14,7 +14,7 @@ pub fn greet(name: &str) {
 }
 
 #[wasm_bindgen]
-pub fn encrypt_bytes(bytes: Vec<u8>) -> EncryptedData {
+pub fn encrypt_bytes(bytes: Vec<u8>) {
     
     todo!()
 }
