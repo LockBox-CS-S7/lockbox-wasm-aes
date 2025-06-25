@@ -1,5 +1,7 @@
-use aes_gcm::{aead::{Aead, AeadCore, KeyInit, OsRng}, Aes256Gcm, Nonce};
+use aes_gcm::{aead::{Aead, KeyInit}, Aes256Gcm, Nonce};
+use sha2::digest::generic_array::GenericArray;
 use super::key_generation;
+use getrandom::getrandom;
 
 /// Encrypts a bytes slice using AES-GCM and PBKDF2.
 /// 
@@ -18,7 +20,11 @@ pub fn encrypt(data: &[u8], passphrase: &str) -> Result<Vec<u8>, aes_gcm::Error>
 
     let cipher = Aes256Gcm::new(&key.into());
 
-    let nonce = Aes256Gcm::generate_nonce(&mut OsRng); // 96-bits; unique per message
+    // Generate the nonce
+    let mut nonce_bytes = [0u8; 12];
+    getrandom(&mut nonce_bytes).expect("Failed to randomly generate nonce");
+    let nonce = GenericArray::from_slice(&nonce_bytes);
+    
     let ciphertext = cipher.encrypt(&nonce, data)?;
 
     let data = EncryptedData {

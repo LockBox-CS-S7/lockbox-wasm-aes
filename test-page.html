@@ -6,11 +6,17 @@
   </head>
   <body>
     <h1>WebAssembly AES encryption demo</h1>
+    <input id="password" type="password" placeholder="password"/>
+    <button id="encrypt-button">encrypt</button>
     <script type="module">
-      import init, { greet } from "./pkg/hello_wasm.js";
+      import init, { encrypt_bytes, decrypt_bytes } from "./pkg/hello_wasm.js";
 
       init().then(() => {
-        greet("WebAssembly");
+        document.getElementById("encrypt-button").addEventListener('click', () => {
+          const demoData = "File data here...";
+          const pass = document.getElementById('password').value;
+          const ciphertext = encrypt_bytes(demoData, pass);
+        });
       });
     </script>
   </body>

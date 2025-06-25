@@ -14,7 +14,12 @@ pub fn greet(name: &str) {
 }
 
 #[wasm_bindgen]
-pub fn encrypt_bytes(bytes: Vec<u8>) {
-    
-    todo!()
+pub fn encrypt_bytes(bytes: Vec<u8>, password: &str) -> Vec<u8> {
+    encrypt(&bytes, password).expect("Failed to encrypt the received data")
+}
+
+#[wasm_bindgen]
+pub fn decrypt_bytes(bytes: Vec<u8>, password: &str) -> Vec<u8> {
+    let data = EncryptedData::from_bytes(bytes);
+    decrypt(data, password).expect("Failed to decrypt the ciphertext")
 }
