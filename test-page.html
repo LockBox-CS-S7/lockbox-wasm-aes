@@ -43,12 +43,12 @@
         document.getElementById("encrypt-button").addEventListener('click', () => {
           if (fileBytes) {
             const password = document.getElementById('password').value;
-            const res = encrypt_bytes(fileBytes, password);
             
-            const ciphertext = res.data;
-            const duration = res.duration;
+            const start = performance.now();
+            const ciphertext = encrypt_bytes(fileBytes, password);
+            const end = performance.now();
             
-            document.getElementById("run-time").innerText = `duration: ${duration}`;
+            document.getElementById("run-time").innerText = `duration: ${end - start}`;
           } else {
             console.error("No file has been uploaded");
           }
