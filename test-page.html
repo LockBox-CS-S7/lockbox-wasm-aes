@@ -5,17 +5,53 @@
     <title>hello-wasm example</title>
   </head>
   <body>
+    <style>
+      body {
+        display: flex;
+        width: 100vw;
+        align-items: center;
+        flex-direction: column;
+      }
+    </style>
+    
+    
     <h1>WebAssembly AES encryption demo</h1>
+    <input type="file" id="fileInput"/>
     <input id="password" type="password" placeholder="password"/>
     <button id="encrypt-button">encrypt</button>
+    <p id="run-time">none</p>
+    
+    
     <script type="module">
       import init, { encrypt_bytes, decrypt_bytes } from "./pkg/hello_wasm.js";
+      
+      
+      let fileBytes = null;
 
       init().then(() => {
+        document.getElementById("fileInput").addEventListener("change", async (event) => {
+          const file = event.target.files[0];
+          if (!file) {
+            console.error("Could not get file from 'target'");
+            return;
+          }
+          
+          const arrayBuffer = await file.arrayBuffer();
+          fileBytes = new Uint8Array(arrayBuffer); // Convert to Uint8Array for Wasm
+        });
+        
         document.getElementById("encrypt-button").addEventListener('click', () => {
-          const demoData = "File data here...";
-          const pass = document.getElementById('password').value;
-          const ciphertext = encrypt_bytes(demoData, pass);
+          if (fileBytes) {
+            const password = document.getElementById('password').value;
+            const res = encrypt_bytes(fileBytes, password);
+            
+            const ciphertext = res.data;
+            const duration = res.duration;
+            
+            document.getElementById("run-time").innerText = `duration: ${duration}`;
+          } else {
+            console.error("No file has been uploaded");
+          }
         });
       });
     </script>
